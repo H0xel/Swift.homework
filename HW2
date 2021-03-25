@@ -1,0 +1,283 @@
+//: [Previous](@previous)
+
+import Foundation
+
+// HW 2.1 Написать функцию с 2 целочисленными аргументы. Вернуть true, если первое делится без остатка на второе и false иначе
+
+func count(int1: Int, int2: Int) -> Bool{
+    if int1 % int2 == 0 {
+        return true
+    } else {
+        return false
+    }
+}
+
+count(int1: 4, int2: 4)
+
+
+
+// HW 2.2 Написать функцию с 2 целочисленными аргументами. Вернуть наименьшее число из функции
+
+func count1(int1: Int, int2: Int) -> Int {
+    if int1 < int2 {
+        return int1
+    } else {
+        return int2
+    }
+}
+
+count1(int1: 3, int2: 2)
+
+// HW 2.3 Написать функцию с 2 целочисленными аргументами. Вернуть нечётный аргумент
+
+func count2(int1: Int, int2: Int) -> String {
+    if int1 % 2 == 1{
+        return "Нечетный аргумент - \(int1)"
+    } else if int2 % 2 == 1 {
+    return "Нечетный аргумент - \(int2)"
+    } else {
+    return "Нет нечетных аргументов"
+    }
+}
+    
+count2(int1: 3, int2: 2)
+
+// HW 2.4 Написать функцию с 3 целочисленными аргументами. Вернуть наибольший аргумент
+
+func count3(arg1: Int, arg2: Int, arg3: Int) -> Int?{
+    let array = [arg1, arg2, arg3]
+    let maxArray = array.max()
+    return maxArray
+}
+
+count3(arg1: 6, arg2: 3, arg3: -2)
+
+
+// HW 2.5 На вход функции 3 числа - стороны треудеугольника. Во-первых, используя функцию существования треугольника, определить, существует ли он. Если существует - определить, какой он - равносторонний, равнобедренный или прост треугольник. Если он не существует из функции вернуть строчку “не существует”. А если да - один из типов “равносторонний”, “равнобедренный”, “прост треугольник”
+
+func triangle(a: Int, b: Int, c: Int){
+    if a + b > c && b + c > a && a + c > b {
+        print("треугольник сущетсвует")
+        if a == b && b == c {
+            print("Треугольник равносторонний")
+        } else if a == b || b == c || c == a {
+            print("Треугольник равнобедренный")
+        } else {
+            print("Просто треугольник")
+        }
+    } else {
+        print("треугольник не сущетсвует")
+    }
+}
+
+triangle(a: 2, b: 2, c: 2)
+
+
+// H@ 2.6 Написать функцию по её математическому описанию: y = f(x), где y = 2x -10, если x > 0, y = 0, если x == 0, y = x*x - 4x + 14, если x < 0 НЕ СДЕЛАНО
+
+func expression(x: Int, y: Int){
+    if x > 0 && y == 0 {
+        print(2*x-10)
+    } else if x == 0 {
+        print(x * x - 4*x + 14)
+    }
+}
+
+expression(x: 2, y: 1)
+
+// HW 2.7 На вход функции 2 целочисленных аргумента. Определить, к какой координатной четверти относится эта точка
+
+func coordinate(x: Int, y: Int){
+    if x > 0 && y > 0 {
+        print("1 четверть")
+    } else if x < 0 && y < 0 {
+        print("3 четверть")
+    } else if x < 0 && y > 0 {
+        print("2 четверть")
+    } else {
+        print("4 четверть")
+    }
+}
+
+coordinate(x: -3, y: 1)
+
+// HW 2.8 На вход функции 1 целочисленный аргумент. Напечатать в консоль все НЕЧЕТНЫЕ числа, не превосходящие это число
+
+func oddNumber(arg: Int){
+    for i in 0..<arg {
+        if i % 2 != 0 {
+            print(i)
+        }
+    }
+}
+
+oddNumber(arg: 7)
+
+// HW 2.9 На вход функции 2 целочисленных аргумента. Напечатать квадраты чисел, находящиеся между 1 и 2 аргументом. ( внимание! 1 аргумент должен быть больше 2-го )
+
+func func1(arg1: Int, arg2: Int) -> Array<Int>{
+    var array: Array<Int> = []
+    for i in arg2...arg1 {
+        if i > arg2 && i < arg1{
+            array.append(i)
+            }
+        }
+    return array.map{$0 * $0}
+}
+    
+
+func1(arg1: 10, arg2: 2)
+
+// HW 2.10 Факториал - произведение всех чисел от 1 до данного числа. Факториал обозначается символом “!” в математике. Так, 5! = 1*2*3*4*5 = 120. Написать функцию, которая в цикле вычисляет факториал входного аргумента.
+
+func factorial(arg: Int) -> Int {
+    var arg1 = 1
+    for i in 1...arg {
+       arg1 *= i
+    }
+    return arg1
+}
+
+factorial(arg: 5)
+
+// HW 2.11 В сбер принесли X рублей на Y лет, годовых N процентов. С помощью цикла определить, сколько денег получит клиент через Y лет. X, Y, N - аргументы функции
+
+func countMoney(money: Double, years: Int, procent: Double){
+    var proc = 1.0
+    for _ in 1...years{
+        proc *= procent
+    }
+    print(money*proc)
+}
+
+countMoney(money: 200, years: 2, procent: 1.06)
+
+
+// HW 2.12 На вход функции массив целых чисел. Вернуть из функции новый массив нечетных чисел, входящих в массив из аргумента.
+
+func array(array: ClosedRange<Int>) -> Array<Int> {
+    var arrayOdd: Array<Int> = []
+    for i in array {
+        if i % 2 != 0{
+            arrayOdd.append(i)
+        }
+    }
+    return arrayOdd
+}
+
+array(array: 1...9)
+
+// HW 2.13 СЛОЖНА. На вход функции массив целых чисел. Написать функцию, возвращающую максимальный элемент. 
+Написать функцию, возвращающую минимальный элемент. Тут описание алгоритма на славянском
+
+
+func arrayMax(array: Array<Int>) -> Int! {
+    let arrayMax = array.max()
+    return arrayMax
+}
+
+arrayMax(array: [1,3,4,66,-5])
+
+func arrayMin(array: Array<Int>) -> Int! {
+    let arrayMin = array.min()
+    return arrayMin
+}
+
+arrayMin(array: [3,0,6,2,6])
+
+// HW 2.14 Написать функцию, печатающую только двузначные числа из массива ( массив в аргументе )
+
+func arrayValue(array: Array<Int>) -> Array<Int> {
+    var doubleArrayValue: Array<Int> = []
+    for i in array {
+        if i > 9 {
+            doubleArrayValue.append(i)
+        }
+    }
+    return doubleArrayValue
+}
+
+arrayValue(array: [5,11,12,9])
+
+// HW 2.15 На вход функции - 2 числа. Вернуть true,  если только первое из них - чётное, а второе - кратно 7
+
+func arguments(arg1: Int, arg2: Int) -> Bool{
+    if arg1 % 2 == 0 && arg2 % 7 == 0{
+        return true
+    } else {
+        return false
+    }
+}
+
+arguments(arg1: 6, arg2: 21)
+
+// HW 2.16 На вход функции - 2 числа. Вернуть true, если оба числа чётные и кратны 78
+
+func arguments1(arg1: Int, arg2:Int) -> Bool {
+        if arg1 % 2 == 0
+        && arg2 % 2 == 0
+        && arg1 % 78 == 0
+        && arg2 % 78 == 0 {
+        return true
+    } else {
+        return false
+    }
+}
+
+arguments1(arg1: 78, arg2: 78)
+
+// HW 2.17 На вход функции - номер месяца в году. Напечатать имя месяца ( 1 -> “Январь”, “2” -> “Февраль” и т д ) 
+Решите задачу с помощью массива с именами месяцев. Номер элемента в массиве на 1 меньше номера месяца
+
+func monthNumber(arg:Int) -> String{
+    let months = ["Январь", "Февраль", "Март",
+                  "Апрель", "Май", "Июнь",
+                  "Июль", "Август","Сентябрь",
+                  "Октябрь", "Ноябрь", "Декабрь"]
+    return months[arg - 1]
+}
+
+monthNumber(arg: 12)
+
+
+// HW 2.18 Написать функцию, возвращающую массив всех четных чисел, не превосходящих входной целочисленный аргумент
+
+func maxArray(arg: Int) -> Array<Int> {
+    let array = (0...arg)
+    var arrayNotOdd: Array<Int> = []
+    for i in array {
+        if i < arg && i % 2 == 0 {
+            arrayNotOdd.append(i)
+        }
+    }
+    return arrayNotOdd
+}
+
+maxArray(arg: 10)
+
+// HW 2.19 Написать функцию, печатающую в консоль элементы входного массива: двузначные и кратные 3
+
+func arrayRange(array: ClosedRange<Int>){
+    var arrayOdd: Array<Int> = []
+    for i in array {
+        if i > 9 && i % 3 == 0 {
+            arrayOdd.append(i)
+        }
+    }
+    print(arrayOdd)
+}
+
+arrayRange(array: 9...20)
+
+// HW 2.20 На вход функции 1 аргумент - целое положительное число. Найти сумму всех нечетных чисел, меньше этого числа
+
+func count1(arg: Int) -> Int{
+    var result = 0
+    for i in 0..<arg where i % 2 == 1 {
+        result += i
+    }
+    return result
+}
+
+count1(arg: 7)
+
