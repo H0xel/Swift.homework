@@ -75,15 +75,17 @@ triangle(a: 2, b: 2, c: 2)
 
 // H@ 2.6 Написать функцию по её математическому описанию: y = f(x), где y = 2x -10, если x > 0, y = 0, если x == 0, y = x*x - 4x + 14, если x < 0 НЕ СДЕЛАНО
 
-func expression(x: Int, y: Int){
-    if x > 0 && y == 0 {
+func expression(x: Int){
+    if x > 0  {
         print(2*x-10)
     } else if x == 0 {
         print(x * x - 4*x + 14)
+    } else {
+    print("x < 0")
     }
 }
 
-expression(x: 2, y: 1)
+expression(x: 0)
 
 // HW 2.7 На вход функции 2 целочисленных аргумента. Определить, к какой координатной четверти относится эта точка
 
