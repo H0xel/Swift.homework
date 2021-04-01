@@ -1,6 +1,6 @@
+//: [Previous](@previous)
 
 import Foundation
-
 
 // HW 2.1 Написать функцию с 2 целочисленными аргументы. Вернуть true, если первое делится без остатка на второе и false иначе
 
@@ -117,18 +117,16 @@ oddNumber(arg: 7)
 
 // HW 2.9 На вход функции 2 целочисленных аргумента. Напечатать квадраты чисел, находящиеся между 1 и 2 аргументом. ( внимание! 1 аргумент должен быть больше 2-го )
 
-func func1(arg1: Int, arg2: Int) -> Array<Int>{
-    var array: Array<Int> = []
-    for i in arg2...arg1 {
-        if i > arg2 && i < arg1{
-            array.append(i)
-            }
+func values(arg1: Int, arg2:Int) {
+    if arg1 < arg2 {
+        print("arg1 < arg2")
+    } else {
+        for i in arg2+1..<arg1{
+            print(i*i)
         }
-    return array.map{$0 * $0}
+    }
 }
-    
-
-func1(arg1: 10, arg2: 2)
+values(arg1: 10, arg2: 5)
 
 // HW 2.10 Факториал - произведение всех чисел от 1 до данного числа. Факториал обозначается символом “!” в математике. Так, 5! = 1*2*3*4*5 = 120. Написать функцию, которая в цикле вычисляет факториал входного аргумента.
 
@@ -140,7 +138,7 @@ func factorial(arg: Int) -> Int {
     return arg1
 }
 
-factorial(arg: 5)
+factorial(arg: 2)
 
 // HW 2.11 В сбер принесли X рублей на Y лет, годовых N процентов. С помощью цикла определить, сколько денег получит клиент через Y лет. X, Y, N - аргументы функции
 
@@ -157,8 +155,8 @@ countMoney(money: 200, years: 2, procent: 1.06)
 
 // HW 2.12 На вход функции массив целых чисел. Вернуть из функции новый массив нечетных чисел, входящих в массив из аргумента.
 
-func array(array: ClosedRange<Int>) -> Array<Int> {
-    var arrayOdd: Array<Int> = []
+func array(array: [Int]) -> [Int] {
+    var arrayOdd: [Int] = []
     for i in array {
         if i % 2 != 0{
             arrayOdd.append(i)
@@ -167,29 +165,57 @@ func array(array: ClosedRange<Int>) -> Array<Int> {
     return arrayOdd
 }
 
-array(array: 1...9)
+array(array: [1,5,6,2,3])
 
 // HW 2.13 СЛОЖНА. На вход функции массив целых чисел. Написать функцию, возвращающую максимальный элемент. Написать функцию, возвращающую минимальный элемент. Тут описание алгоритма на славянском
 
 
-func arrayMax(array: Array<Int>) -> Int! {
+func arrayMax(array: [Int]) -> Int? {
     let arrayMax = array.max()
     return arrayMax
 }
 
 arrayMax(array: [1,3,4,66,-5])
 
-func arrayMin(array: Array<Int>) -> Int! {
+func arrayMin(array: [Int]) -> Int? {
     let arrayMin = array.min()
     return arrayMin
 }
 
 arrayMin(array: [3,0,6,2,6])
 
+func funcMax(array: [Int]) -> Int {
+    var t: Int = array[0]
+    for i in array {
+        if i >= t {
+            t = i
+        }
+    }
+    return t
+}
+
+funcMax(array: [1,5,7,10,-5])
+
+func funcMin(array: [Int]) -> Int {
+    var t: Int = array[0]
+    for i in array {
+        print(i)
+        if i <= t {
+            t = i
+        }
+    }
+    return t
+}
+
+funcMin(array: [1,5,7,10,-5])
+
+
+
+
 // HW 2.14 Написать функцию, печатающую только двузначные числа из массива ( массив в аргументе )
 
-func arrayValue(array: Array<Int>) -> Array<Int> {
-    var doubleArrayValue: Array<Int> = []
+func arrayValue(array: [Int]) -> [Int] {
+    var doubleArrayValue: [Int] = []
     for i in array {
         if i > 9 {
             doubleArrayValue.append(i)
@@ -242,9 +268,9 @@ monthNumber(arg: 12)
 
 // HW 2.18 Написать функцию, возвращающую массив всех четных чисел, не превосходящих входной целочисленный аргумент
 
-func maxArray(arg: Int) -> Array<Int> {
+func maxArray(arg: Int) -> [Int] {
     let array = (0...arg)
-    var arrayNotOdd: Array<Int> = []
+    var arrayNotOdd: [Int] = []
     for i in array {
         if i < arg && i % 2 == 0 {
             arrayNotOdd.append(i)
@@ -257,8 +283,8 @@ maxArray(arg: 10)
 
 // HW 2.19 Написать функцию, печатающую в консоль элементы входного массива: двузначные и кратные 3
 
-func arrayRange(array: ClosedRange<Int>){
-    var arrayOdd: Array<Int> = []
+func arrayRange(array: [Int]){
+    var arrayOdd: [Int] = []
     for i in array {
         if i > 9 && i % 3 == 0 {
             arrayOdd.append(i)
@@ -267,7 +293,7 @@ func arrayRange(array: ClosedRange<Int>){
     print(arrayOdd)
 }
 
-arrayRange(array: 9...20)
+arrayRange(array: [12,4,8,6,2])
 
 // HW 2.20 На вход функции 1 аргумент - целое положительное число. Найти сумму всех нечетных чисел, меньше этого числа
 
