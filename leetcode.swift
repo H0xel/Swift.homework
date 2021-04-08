@@ -33,3 +33,18 @@ func array1(array: [Int]) -> [Int]{
     }
     return emptyArray
 }
+
+// Leetcode 3 Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice. You can return the answer in any order.
+
+func array(array: [Int], target: Int) -> [Int] {
+    var emptyArray = [Int]()
+    
+    for i in 0..<array.count {
+        for b in array {
+            if target == array[i] + b, array[i] != b {
+                emptyArray.append(i)
+                }
+            }
+        }
+    return emptyArray
+}
