@@ -65,3 +65,36 @@ class Solution {
         return reversedX
     }
 }
+
+// LeetCode 5 Given an array nums and a value val, remove all instances of that value in-place and return the new length.
+
+struct RemoveElement {
+    func removeElement(arr: inout[Int], val: Int) -> Int {
+        arr = arr.filter {$0 != val}
+        return arr.count
+    }
+}
+
+struct RemoveElement2 {
+    func removeElement(arr: inout[Int], val: Int) -> Int {
+        arr.removeAll {$0 == val}
+        return arr.count
+    }
+}
+
+// LeetCode 6 You are given an array prices where prices[i] is the price of a given stock on the ith day. You want to maximize your profit by choosing a single day to buy one stock and choosing a different day in the future to sell that stock. Return the maximum profit you can achieve from this transaction. If you cannot achieve any profit, return 0.
+
+struct Profit {
+    func count(array: [Int]) -> Int{
+       var profit = 0
+        for dayOfBuy in 0..<array.count {
+            for dayOfSell in dayOfBuy+1..<array.count{
+                let differenceOfBuy = array[dayOfSell] - array[dayOfBuy]
+                if profit < differenceOfBuy {
+                    profit = differenceOfBuy
+                }
+            }
+        }
+        return profit
+    }
+}
