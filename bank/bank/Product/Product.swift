@@ -12,9 +12,9 @@ enum CashOutType: String, Codable {
 }
 
 struct Deposit: Codable {
-    let summ: Float
     let percent: Float
-    let type: CashOutType 
+    let summ: Float
+    let type: CashOutType
 }
 
 enum ProductType: Codable {
