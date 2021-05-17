@@ -20,10 +20,16 @@ protocol Bank {
 
 class BankImpl {
     
-    let storage: Storage // зависимость
+//    let storage: Storage // зависимость
+    let userStorage: UserStorage
+    let productStorage: ProductStorage
     
-    init(storage: Storage) { // инъекция зависимости
-        self.storage = storage
+    init(
+        storage: UserStorage,
+        productStorage: ProductStorage
+        ) { // инъекция зависимости
+        userStorage = storage
+        self.productStorage = productStorage
     }
 }
 
@@ -36,9 +42,8 @@ extension BankImpl: Bank {
                         email: email,
                         phone: phone,
                         address: address)
-        
-        let storageUser = UserStorageImpl(storage: storage)
-        storageUser.add(user: user)
+            
+        userStorage.add(user: user)
 
         return user
     }
@@ -48,6 +53,8 @@ extension BankImpl: Bank {
                               name: "Разделяй и зарабатывай!",
                               type: .deposit(Deposit(percent: 12, summ: 0, type: .month)))
         
+        productStorage.addProduct(user: user, product: product)
+        
         return product
     }
     
@@ -56,45 +63,49 @@ extension BankImpl: Bank {
                               name: "Бери щас плати всю жизнь!",
                               type: .credit(Credit(summ: 15_000, months: 12, percentYear: 720)))
         
+        productStorage.addProduct(user: user, product: product)
+        
         return product
     }
     
 }
 
-extension Bank {
-
-    func store(client: User) {}
-
-    func store(product: Product, user: User) {}
-    
-}
-
-extension BankImpl {
-    
-    /*если надоело гонять JSONEncoder/JSONDecoder - можете прочитать про Generic и Generic constraint. Либо сделать абстракцию -= UserStorage,
-     
-     {getUsers() -> [Users], setUsers(_users: [Users])}, в него надо инжектнуть Storage*/
-    
-    func store(client: User) {
-        
-        guard let userData = storage.get(key: "clients") else { return }
-        
-        do {
-            
-            var userArray = try JSONDecoder().decode([User].self, from: userData)
-                for i in userArray {
-                if client.id != i.id {
-                    userArray.append(client)
-                }
-            }
-
-            let userArrayData = try JSONEncoder().encode(userArray)
-            storage.set(data: userArrayData, key: "clients")
-            
-        } catch {
-            print("Error - \(error)")
-        }
-        
+//extension Bank {
+//
+//    func store(client: User) {}
+//
+//    func store(product: Product, user: User) {}
+//
+//}
+//
+//extension BankImpl {
+//
+//    /*если надоело гонять JSONEncoder/JSONDecoder - можете прочитать про Generic и Generic constraint. Либо сделать абстракцию -= UserStorage,
+//
+//     {getUsers() -> [Users], setUsers(_users: [Users])}, в него надо инжектнуть Storage*/
+//
+//    func store(client: User) {
+//
+//        guard let userData = storage.get(key: "clients") else { return }
+//
+//        do {
+//            var userArray = try JSONDecoder().decode([User].self, from: userData)
+//
+//                for i in userArray {
+//                if client.id != i.id {
+//                    userArray.append(client)
+//                }
+//            }
+//
+//            let userArrayData = try JSONEncoder().encode(userArray)
+//            storage.set(data: userArrayData, key: "clients")
+//
+//        } catch {
+//
+//            print("Error - \(error)")
+//
+//        }
+//
         
         
         /* клиентов храним в массиве:
@@ -105,92 +116,38 @@ extension BankImpl {
          - и если юзера нет - то аппендим в массив,
          - JSONEncoder() -> Data -> storage.set(data:key)
          */
-    }
-    
-    func store(product: Product, user: User) {
-        
-        guard let productData = storage.get(key: "products_of_user_\(user.id)") else {
-            return
-        }
-        
-        var arrayProduct = try! JSONDecoder().decode([Product].self, from: productData)
-        
-        for i in arrayProduct {
-            if product.id != i.id {
-                arrayProduct.append(product)
-            }
-        }
-        
-        let arrayProductData = try! JSONEncoder().encode(arrayProduct)
-        
-        storage.set(data: arrayProductData, key: "products_of_user_\(user.id)")
-        
-        
-        /*
-          - ключ формируется: "products_of_user_\(user.id)"
-         - достаем массив продуктов -> JSONDecoder() -> [Product] (тип [Product].self)
-         - проверям, что в массиве нету продукта с указанным идентификатором
-         - аппендим в массив
-         - JSONEncoder() -> Data -> storage.set(data:key)
-         */
-    }
-}
+//    }
+//
+//    func store(product: Product, user: User) {
+//
+//        guard let productData = storage.get(key: "products_of_user_\(user.id)") else {
+//            return
+//        }
+//
+//        var arrayProduct = try! JSONDecoder().decode([Product].self, from: productData)
+//
+//        for i in arrayProduct {
+//            if product.id != i.id {
+//                arrayProduct.append(product)
+//            }
+//        }
+//
+//        let arrayProductData = try! JSONEncoder().encode(arrayProduct)
+//
+//        storage.set(data: arrayProductData, key: "products_of_user_\(user.id)")
+//
+//
+//        /*
+//          - ключ формируется: "products_of_user_\(user.id)"
+//         - достаем массив продуктов -> JSONDecoder() -> [Product] (тип [Product].self)
+//         - проверям, что в массиве нету продукта с указанным идентификатором
+//         - аппендим в массив
+//         - JSONEncoder() -> Data -> storage.set(data:key)
+//         */
+//    }
+//}
 
-protocol UserStorage {
-    
-    func users() -> [User]
-    func add(user: User)
-    
-}
 
-class UserStorageImpl: UserStorage {
-    
-    let storage: Storage
-    
-    init(storage: Storage) {
-        self.storage = storage
-    }
-    
-    func users() -> [User] {
-        
-        guard let usersData = storage.get(key: "clients") else {
-            return []
-        }
-        
-        do {
-            let users = try JSONDecoder().decode([User].self, from: usersData)
-            
-            return users
-            
-        } catch {
-            
-            print("JSONDecoder error \(error)")
-            
-            return []
-        }
-    }
-    
-    func add(user: User) {
-        guard let usersData = storage.get(key: "clients") else {
-            return
-        }
-        
-        do {
-            var users = try JSONDecoder().decode([User].self, from: usersData)
-            // убедиться, что юзера нету в этом массиве по идентификатору user.id
-            for i in users {
-                if user.id != i.id {
-                    users.append(user)
-                }
-            }
-            let usersData = try JSONEncoder().encode(users)
-            storage.set(data: usersData, key: "clients")
-            
-        } catch {
-            print("JSONDecoder error \(error)")
-        }
-    }
-}
 
 
 
@@ -241,3 +198,4 @@ let bank2 = BankAssembly().bank
 bank1.send(summ: 123, phone: Phone(countryCode: 7, numberPhone: 3234324234))
 
 */
+
