@@ -4,7 +4,7 @@ import Foundation
 protocol ProductStorage {
     
     func addProduct(user: User, product: Product)
-    
+    // func getProducts(user: User) -> [Product]
 }
 
 class ProductStorageImpl: ProductStorage {

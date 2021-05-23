@@ -9,6 +9,9 @@ protocol Bank {
                       address: Address) -> User
     func createDepositProduct(user: User) -> Product
     func createCreditProduct(user: User) -> Product
+//    func fill(product: Product, user: User)
+    // func withdraw(product: Product, user: User)
+    // func products(user: User) -> [Product]
 }
 
 class BankImpl {
@@ -62,96 +65,6 @@ extension BankImpl: Bank {
     
 }
 
-//extension Bank {
-//
-//    func store(client: User) {}
-//
-//    func store(product: Product, user: User) {}
-//
-//}
-//
-//extension BankImpl {
-//
-//    /*если надоело гонять JSONEncoder/JSONDecoder - можете прочитать про Generic и Generic constraint. Либо сделать абстракцию -= UserStorage,
-//
-//     {getUsers() -> [Users], setUsers(_users: [Users])}, в него надо инжектнуть Storage*/
-//
-//    func store(client: User) {
-//
-//        guard let userData = storage.get(key: "clients") else {
-//            let array = [client]
-//
-//            do {
-//                let arrayData = try JSONEncoder().encode(array)
-//                storage.set(data: arrayData, key: "clients")
-//            } catch {
-//                print("JSONEncoder error \(error)")
-//            }
-//            return }
-//
-//        do {
-//            var userArray = try JSONDecoder().decode([User].self, from: userData)
-//
-//                for i in userArray {
-//                if client.id != i.id {
-//                    userArray.append(client)
-//                }
-//            }
-//
-//            let userArrayData = try JSONEncoder().encode(userArray)
-//            storage.set(data: userArrayData, key: "clients")
-//
-//        } catch {
-//
-//            print("Error - \(error)")
-//
-//        }
-//
-//
-//
-//        /* клиентов храним в массиве:
-//
-//         - читаем Data из словаря по ключу "clients"
-//         - JSONDecoder() -> [User] (тип [User].self)
-//         - аппендим в массив User, проверив предвраительно, что юзера с таким айдишником в массиве нет
-//         - и если юзера нет - то аппендим в массив,
-//         - JSONEncoder() -> Data -> storage.set(data:key)
-//         */
-//    }
-//
-//    func store(product: Product, user: User) {
-//
-//        guard let productData = storage.get(key: "products_of_user_\(user.id)") else {
-//            return
-//        }
-//
-//        var arrayProduct = try! JSONDecoder().decode([Product].self, from: productData)
-//
-//        for i in arrayProduct {
-//            if product.id != i.id {
-//                arrayProduct.append(product)
-//            }
-//        }
-//
-//        let arrayProductData = try! JSONEncoder().encode(arrayProduct)
-//
-//        storage.set(data: arrayProductData, key: "products_of_user_\(user.id)")
-//
-//
-//        /*
-//          - ключ формируется: "products_of_user_\(user.id)"
-//         - достаем массив продуктов -> JSONDecoder() -> [Product] (тип [Product].self)
-//         - проверям, что в массиве нету продукта с указанным идентификатором
-//         - аппендим в массив
-//         - JSONEncoder() -> Data -> storage.set(data:key)
-//         */
-//    }
-//}
-
-
-
-
-
 
 /*
  
@@ -159,44 +72,74 @@ extension BankImpl: Bank {
  
  */
 
+enum MoneySenderError: Error {
+    case userNotFound
+    case insuffisentFunds
+}
+
+enum MoneyRecieverError: Error {
+    case userNotFound
+    case noValidProducts
+}
+
 protocol MoneyReciever {
-    func recieve(summ: Float, phone: Phone) -> Bool
+    func recieve(summ: Float, phone: Phone) throws
 }
 
 protocol MoneySender {
-    func send(summ: Float, phone: Phone) -> Bool
+    func send(from: Phone, summ: Float) throws
 }
 
-// в банк инжектим MoneySender
-// сам банк реализует MoneyReciever
+/*ё
+ -2. Избавиться от for и if в работе с массивами - вернуться к концепции first(where: ), filter(where:) и т д
+ -1. Предварительно в protocol Bank добавить метод списания средств со счета.
+ 0. Предварительно в protocol Bank внести изменения - сделать метод, добавляющий денег на счет.
 
-class FastPaymentsService: MoneySender {
-    var recievers = [MoneyReciever]()
+ 1. Банк должен реализовать протокол MoneySender. В методе send(from: Phone, summ: Float) нужно проверить:
+  - существует ли клиент с номером телефона Phone. Если не найден - кидаете ошибку MoneySenderError.userNotFound
+  - Если существует - идете в счета юзера. Нельзя отправить бабки с кредитного счета. Нельзя отправить бабки с дебетного счета, если там недостаточно средств. Если не выполняется одно из условий - кидаете ошибку MoneySenderError.insuffisentFunds.
+ - если все ок - берем дебетный счет и списываем деньги.
+ 
+ 2. Банк должен реализовать протокол MoneyReciever.
+  - существует ли клиент с номером телефона Phone. Если не существует - кидаем ошибку MoneyRecieverError.userNotFound
+  - Если существует - берем продукты юзера. Если продуктов нет - кидаем ошибку MoneyRecieverError.noValidProducts
+  - Если есть дебетные счета - пополняем (с помощью пункта 0) первый дебетный счет. Если нету - то пополняем кредитный счет;
+ 
+ 3. FastPaymentsService send(from: Phone, summ: Float, to: Phone) throws как реализовать метод:
+ 
+    - идем в цикле по banks. У каждого элемента вызываем метод send(from: Phone, summ: Float). в do блоке если прошли за метод try bank.send() -> значит, что бабки списались и начинаем их отправлять, выходим из цикла (break)
+    - идем в цикле по banks. У каждого элемента вызываем метод try bank.recieve(). если успешно -> печатаем в консоль успех!!!
+ 
+ 4. Дебаг - как понять, что деньги ушли? В протокол Bank добавляем метод products(of: User) - достаем все продукты юзеров и печатаем баланс после перевода - смотрим, перевелись ли деньги.;
+ 
+ */
+
+class FastPaymentsService {
+    var banks = [MoneyReciever & MoneySender]()
     
-    func send(summ: Float, phone: Phone) -> Bool {
-        var isSent = false
-        
-        recievers.forEach {
-            if $0.recieve(summ: summ, phone: phone) {
-                isSent = true
-                return
-            }
-        }
-        
-        return isSent
+    func send(from: Phone, summ: Float, to: Phone) throws {
     }
     
-    func register(reciever: MoneyReciever) {
-        recievers.append(reciever)
+    func register(bank: MoneyReciever & MoneySender) {
+        banks.append(bank)
+    }
+}
+
+class FastPaymentsAssembly {
+    var service: FastPaymentsService {
+        return FastPaymentsService()
     }
 }
 
 
-/*
-let bank1 = BankAssembly().bank
-let bank2 = BankAssembly().bank
-
-bank1.send(summ: 123, phone: Phone(countryCode: 7, numberPhone: 3234324234))
-
-*/
-
+//
+//let service = FastPaymentsAssembly().service
+//let bank1 = BankAssembly().bank
+//let bank2 = BankAssembly().bank
+//
+// создать клиентов, создать продукты клиентам, положить деньги на счет клиентов (пункт 0)
+//
+//service.register(reciever: bank1)
+//service.register(reciever: bank2)
+//
+//service.send(summ: <#T##Float#>, phone: <#T##Phone#>)
