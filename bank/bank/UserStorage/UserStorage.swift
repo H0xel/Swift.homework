@@ -1,11 +1,12 @@
-//
-//  UserStorage.swift
-//  bank
-//
-//  Created by Ivan Amakhin on 17.05.2021.
-//
 
 import Foundation
+
+enum UserStorageError: Error {
+    case decoding(Error)
+    case encoding(Error)
+    case userExists
+}
+
 
 protocol UserStorage {
     
@@ -41,7 +42,7 @@ class UserStorageImpl: UserStorage {
         }
     }
     
-    func add(user: User) {
+    func add(user: User) throws {
         guard let usersData = storage.get(key: "clients") else {
             let array = [user]
             
@@ -49,7 +50,7 @@ class UserStorageImpl: UserStorage {
                 let arrayData = try JSONEncoder().encode(array)
                 storage.set(data: arrayData, key: "clients")
             } catch {
-                print("JSONEncoder error \(error)")
+                throw UserStorageError.encoding(error)
             }
             return
         }
@@ -58,6 +59,10 @@ class UserStorageImpl: UserStorage {
             var users = try JSONDecoder().decode([User].self, from: usersData)
             
             // убедиться, что юзера нету в этом массиве по идентификатору user.id
+            
+            users.first { <#User#> in
+                <#code#>
+            }
             
             for i in users {
                 if user.id != i.id {
@@ -69,7 +74,7 @@ class UserStorageImpl: UserStorage {
             storage.set(data: usersData, key: "clients")
             
         } catch {
-            print("JSONDecoder error \(error)")
+            throw UserStorageError.decoding(error)
         }
     }
 }

@@ -1,10 +1,3 @@
-//
-//  bank.swift
-//  bank
-//
-//  Created by Ivan Amakhin on 03.05.2021.
-//
-
 import Foundation
 
 protocol Bank {
@@ -20,7 +13,6 @@ protocol Bank {
 
 class BankImpl {
     
-//    let storage: Storage // зависимость
     let userStorage: UserStorage
     let productStorage: ProductStorage
     
@@ -86,7 +78,16 @@ extension BankImpl: Bank {
 //
 //    func store(client: User) {
 //
-//        guard let userData = storage.get(key: "clients") else { return }
+//        guard let userData = storage.get(key: "clients") else {
+//            let array = [client]
+//
+//            do {
+//                let arrayData = try JSONEncoder().encode(array)
+//                storage.set(data: arrayData, key: "clients")
+//            } catch {
+//                print("JSONEncoder error \(error)")
+//            }
+//            return }
 //
 //        do {
 //            var userArray = try JSONDecoder().decode([User].self, from: userData)
@@ -106,16 +107,16 @@ extension BankImpl: Bank {
 //
 //        }
 //
-        
-        
-        /* клиентов храним в массиве:
-         
-         - читаем Data из словаря по ключу "clients"
-         - JSONDecoder() -> [User] (тип [User].self)
-         - аппендим в массив User, проверив предвраительно, что юзера с таким айдишником в массиве нет
-         - и если юзера нет - то аппендим в массив,
-         - JSONEncoder() -> Data -> storage.set(data:key)
-         */
+//
+//
+//        /* клиентов храним в массиве:
+//
+//         - читаем Data из словаря по ключу "clients"
+//         - JSONDecoder() -> [User] (тип [User].self)
+//         - аппендим в массив User, проверив предвраительно, что юзера с таким айдишником в массиве нет
+//         - и если юзера нет - то аппендим в массив,
+//         - JSONEncoder() -> Data -> storage.set(data:key)
+//         */
 //    }
 //
 //    func store(product: Product, user: User) {

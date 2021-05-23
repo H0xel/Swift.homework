@@ -1,9 +1,3 @@
-//
-//  ProductStorage.swift
-//  bank
-//
-//  Created by Ivan Amakhin on 17.05.2021.
-//
 
 import Foundation
 
@@ -38,11 +32,13 @@ class ProductStorageImpl: ProductStorage {
         
         do {
             var productArray = try JSONDecoder().decode([Product].self, from: productData)
+            
+            var id = productArray.filter{ $0.id != user.id }
+            
             for i in productArray {
                 if i.id != product.id {
                     productArray.append(product)
                 }
-            
             }
         }
         catch {

@@ -2,6 +2,7 @@ import Foundation
 
 let assembly1 = BankAssembly()
 var storageBank = assembly1.storagesAssembly.userDefaults
+var storageBankget = assembly1.storagesAssembly.userDefaults.get(key: "clients")
 let bank = assembly1.bank
 
 let testclient1 = bank.createClient(name: "John", secondName: "John", lastName: "John", email: "John", phone: Phone(countryCode: 7, numberPhone: 2131241), address: Address(country: "Russia", city: "Moscow", street: "Random", house: "Random", flat: 1, floor: 1))
@@ -10,14 +11,19 @@ let testclient1 = bank.createClient(name: "John", secondName: "John", lastName: 
 //
 //let client2 = bank.createClient(name: "Ivan", secondName: "Ivanov", lastName: "Ivanovich", email: "ii@gmail.com", phone: Phone(countryCode: 7, numberPhone: 9051234873), address: Address(country: "Russia", city: "Moscow", street: "Unknown str", house: "24k2", flat: 14, floor: 3))
 
-let creditProduct1 = bank.createCreditProduct(user: testclient1)
-let depositProduct = bank.createDepositProduct(user: testclient1)
+//let creditProduct1 = bank.createCreditProduct(user: testclient1)
+//let depositProduct = bank.createDepositProduct(user: testclient1)
 
-storageBank.remove(key: "clients")
 
-if let data1 = assembly1.storagesAssembly.inMemory.get(key: "clients") {
-    let data2 = String(data: data1, encoding: .utf8)
-    print(data2)
-}
+//storageBankget?.removeAll()
+//
+//print(storageBankget)
+
+
+//if let data1 = assembly1.storagesAssembly.userDefaults.get(key: "products_of_user_\(user.id)") {
+//    let data2 = String(data: data1, encoding: .utf8)
+//    print(data2)
+//}
+
 
 
