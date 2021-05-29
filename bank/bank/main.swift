@@ -26,4 +26,15 @@ let testclient1 = bank.createClient(name: "John", secondName: "John", lastName: 
 //}
 
 
+do {
+    let result = try someFunc(arg: 2)
+    print(result)
+} catch {
+    print(error)
+}
 
+if let result = someFunc1(arg: 2) {
+    
+} else {
+    // no result
+}

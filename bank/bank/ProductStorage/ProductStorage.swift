@@ -4,7 +4,7 @@ import Foundation
 protocol ProductStorage {
     
     func addProduct(user: User, product: Product)
-    
+    // func getProducts(user: User) -> [Product]
 }
 
 class ProductStorageImpl: ProductStorage {
@@ -46,3 +46,28 @@ class ProductStorageImpl: ProductStorage {
         }
     }
 }
+
+
+enum CustomError: Error {
+    case evenNumber
+    case error2(Error)
+    case error3
+}
+
+func someFunc(arg: Int) throws -> Int  {
+    if arg % 2 == 0 {
+        throw CustomError.evenNumber
+    } else {
+        return arg
+    }
+}
+
+func someFunc1(arg: Int) -> Int? {
+    if arg % 2 == 0 {
+        return nil
+    } else {
+        return arg
+    }
+}
+
+
