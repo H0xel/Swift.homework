@@ -9,7 +9,9 @@ protocol Bank {
                       address: Address) -> User
     func createDepositProduct(user: User) -> Product
     func createCreditProduct(user: User) -> Product
-//    func fill(product: Product, user: User)
+    func addMoney( user: User, product: Product)
+    func removeMoney( user: User, product: Product)
+    // func fill(product: Product, user: User, summ: Float)
     // func withdraw(product: Product, user: User)
     // func products(user: User) -> [Product]
 }
@@ -29,6 +31,23 @@ class BankImpl {
 }
 
 extension BankImpl: Bank {
+    
+    func addMoney(user: User, product: Product) {
+        
+        do {
+            
+        } catch {
+            
+            print("User has no deposit")
+            
+        }
+        
+    }
+    
+    func removeMoney(user: User, product: Product) {
+//        user.bankAccount.removeMoney(money: money)
+    }
+    
     func createClient(name: String, secondName: String, lastName: String, email: String, phone: Phone, address: Address) -> User {
         let user = User(id: UUID().uuidString,
                         name: name,
@@ -37,8 +56,15 @@ extension BankImpl: Bank {
                         email: email,
                         phone: phone,
                         address: address)
+        do {
             
-        userStorage.add(user: user)
+        try userStorage.add(user: user)
+            
+        } catch {
+            
+            print("User exists")
+            
+        }
 
         return user
     }
@@ -47,7 +73,7 @@ extension BankImpl: Bank {
         let product = Product(id: UUID().uuidString,
                               name: "Разделяй и зарабатывай!",
                               type: .deposit(Deposit(percent: 12, summ: 0, type: .month)))
-        
+        product.type
         productStorage.addProduct(user: user, product: product)
         
         return product
@@ -90,24 +116,82 @@ protocol MoneySender {
     func send(from: Phone, summ: Float) throws
 }
 
-/*ё
+
+
+extension BankImpl: MoneySender {
+    func send(from phone: Phone, summ: Float) throws {
+        do {
+            
+            var users = userStorage.users()
+            if users.contains(where: {$0.phone == phone}) == false {
+                do {
+                    // search debet product, if money > summ { money -= summ}
+                } catch {
+                    MoneySenderError.insuffisentFunds
+                }
+            }
+            
+        } catch {
+            
+            throw MoneySenderError.userNotFound
+            
+        }
+    }
+}
+
+extension BankImpl: MoneyReciever {
+    func recieve(summ: Float, phone: Phone) throws {
+        do {
+            
+            var users = userStorage.users()
+            if users.contains(where: {$0.phone == phone}) == false {
+                do {
+                    // search debet product, if money > summ {}
+                    // addMoney(user: <#T##User#>, money: <#T##Float#>, product: <#T##Product#>)
+                } catch {
+                    MoneyRecieverError.noValidProducts
+                }
+            }
+            
+        } catch {
+            
+            throw MoneyRecieverError.userNotFound
+            
+        }
+    }
+}
+
+
+
+
+/*
+ 
  -2. Избавиться от for и if в работе с массивами - вернуться к концепции first(where: ), filter(where:) и т д
+ 
  -1. Предварительно в protocol Bank добавить метод списания средств со счета.
+ 
  0. Предварительно в protocol Bank внести изменения - сделать метод, добавляющий денег на счет.
 
  1. Банк должен реализовать протокол MoneySender. В методе send(from: Phone, summ: Float) нужно проверить:
+ 
   - существует ли клиент с номером телефона Phone. Если не найден - кидаете ошибку MoneySenderError.userNotFound
+ 
   - Если существует - идете в счета юзера. Нельзя отправить бабки с кредитного счета. Нельзя отправить бабки с дебетного счета, если там недостаточно средств. Если не выполняется одно из условий - кидаете ошибку MoneySenderError.insuffisentFunds.
+ 
  - если все ок - берем дебетный счет и списываем деньги.
  
  2. Банк должен реализовать протокол MoneyReciever.
+ 
   - существует ли клиент с номером телефона Phone. Если не существует - кидаем ошибку MoneyRecieverError.userNotFound
+ 
   - Если существует - берем продукты юзера. Если продуктов нет - кидаем ошибку MoneyRecieverError.noValidProducts
+ 
   - Если есть дебетные счета - пополняем (с помощью пункта 0) первый дебетный счет. Если нету - то пополняем кредитный счет;
  
  3. FastPaymentsService send(from: Phone, summ: Float, to: Phone) throws как реализовать метод:
  
     - идем в цикле по banks. У каждого элемента вызываем метод send(from: Phone, summ: Float). в do блоке если прошли за метод try bank.send() -> значит, что бабки списались и начинаем их отправлять, выходим из цикла (break)
+ 
     - идем в цикле по banks. У каждого элемента вызываем метод try bank.recieve(). если успешно -> печатаем в консоль успех!!!
  
  4. Дебаг - как понять, что деньги ушли? В протокол Bank добавляем метод products(of: User) - достаем все продукты юзеров и печатаем баланс после перевода - смотрим, перевелись ли деньги.;
@@ -132,14 +216,14 @@ class FastPaymentsAssembly {
 }
 
 
-//
+
 //let service = FastPaymentsAssembly().service
 //let bank1 = BankAssembly().bank
 //let bank2 = BankAssembly().bank
 //
 // создать клиентов, создать продукты клиентам, положить деньги на счет клиентов (пункт 0)
 //
-//service.register(reciever: bank1)
+//service.register(receiver: bank1)
 //service.register(reciever: bank2)
 //
 //service.send(summ: <#T##Float#>, phone: <#T##Phone#>)

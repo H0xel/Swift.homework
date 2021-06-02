@@ -11,12 +11,12 @@ enum UserStorageError: Error {
 protocol UserStorage {
     
     func users() -> [User]
-    func add(user: User)
+    func add(user: User) throws
     
 }
 
 class UserStorageImpl: UserStorage {
-    
+
     let storage: Storage
     
     init(storage: Storage) {
@@ -43,14 +43,17 @@ class UserStorageImpl: UserStorage {
     }
     
     func add(user: User) throws {
+        
         guard let usersData = storage.get(key: "clients") else {
             let array = [user]
             
-            do {
-                let arrayData = try JSONEncoder().encode(array)
+        do {
+                
+            let arrayData = try JSONEncoder().encode(array)
                 storage.set(data: arrayData, key: "clients")
-            } catch {
-                throw UserStorageError.encoding(error)
+                
+        } catch {
+            throw UserStorageError.encoding(error)
             }
             return
         }
@@ -60,14 +63,8 @@ class UserStorageImpl: UserStorage {
             
             // убедиться, что юзера нету в этом массиве по идентификатору user.id
             
-            users.first { <#User#> in
-                <#code#>
-            }
-            
-            for i in users {
-                if user.id != i.id {
-                    users.append(user)
-                }
+            if users.contains(where: {$0.id == user.id}) == false {
+                users.append(user)
             }
             
             let usersData = try JSONEncoder().encode(users)
