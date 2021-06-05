@@ -1,7 +1,7 @@
 import Foundation
 
 let assembly1 = BankAssembly()
-var storageBank = assembly1.storagesAssembly.userStorage.users()
+var storageBank = assembly1.storagesAssembly.inMemory.get(key: "clients")
 let bank = assembly1.bank
 
 let testclient1 = bank.createClient(name: "John", secondName: "John", lastName: "John", email: "John", phone: Phone(countryCode: 7, numberPhone: 2131241), address: Address(country: "Russia", city: "Moscow", street: "Random", house: "Random", flat: 1, floor: 1))

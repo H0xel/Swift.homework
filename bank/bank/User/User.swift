@@ -24,5 +24,17 @@ struct User: Codable {
     let address: Address
 }
 
-
-
+//struct BankAccount: Codable {
+//
+//    var storage: Storage
+//    var userStorage: UserStorage
+//    var deposit: Float
+//
+//    func addMoney(summ: Float, user: User){
+//        guard let userArray = try storage.get(key: "depositMoney_\(user.id)") else {
+//        }
+//    }
+//    func removeMoney(summ: Float, user: User){
+//
+//    }
+//}

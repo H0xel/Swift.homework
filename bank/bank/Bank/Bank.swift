@@ -36,6 +36,9 @@ extension BankImpl: Bank {
         
         do {
             
+//            var productArray = productStorage.getProducts(user: user)
+//            if productArray.contains(where: { $0.})
+            
         } catch {
             
             print("User has no deposit")
@@ -45,7 +48,7 @@ extension BankImpl: Bank {
     }
     
     func removeMoney(user: User, product: Product) {
-//        user.bankAccount.removeMoney(money: money)
+            
     }
     
     func createClient(name: String, secondName: String, lastName: String, email: String, phone: Phone, address: Address) -> User {
@@ -73,7 +76,7 @@ extension BankImpl: Bank {
         let product = Product(id: UUID().uuidString,
                               name: "Разделяй и зарабатывай!",
                               type: .deposit(Deposit(percent: 12, summ: 0, type: .month)))
-        product.type
+        
         productStorage.addProduct(user: user, product: product)
         
         return product
@@ -119,11 +122,10 @@ protocol MoneySender {
 
 
 extension BankImpl: MoneySender {
-    func send(from phone: Phone, summ: Float) throws {
+    func send(from: Phone, summ: Float) throws {
         do {
-            
             var users = userStorage.users()
-            if users.contains(where: {$0.phone == phone}) == false {
+            if users.contains(where: {$0.phone == from}) == true {
                 do {
                     // search debet product, if money > summ { money -= summ}
                 } catch {
@@ -202,8 +204,15 @@ class FastPaymentsService {
     var banks = [MoneyReciever & MoneySender]()
     
     func send(from: Phone, summ: Float, to: Phone) throws {
+        
+            do {
+                try banks.forEach{
+                try $0.send(from: from, summ: summ)
+                }
+            } catch {
+                
+        }
     }
-    
     func register(bank: MoneyReciever & MoneySender) {
         banks.append(bank)
     }

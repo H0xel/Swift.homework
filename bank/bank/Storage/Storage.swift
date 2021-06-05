@@ -18,15 +18,6 @@ class UserDef: Storage {
     }
 }
 
-extension Storage {
-    func remove(key: String) {}
-}
-
-extension UserDef {
-    func remove(key: String) {
-        user.removeObject(forKey: key)
-    }
-}
 
 class FileManag: Storage {
     
