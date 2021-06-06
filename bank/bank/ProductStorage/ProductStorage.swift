@@ -3,8 +3,8 @@ import Foundation
 
 protocol ProductStorage {
     
-    func getProducts(user: User) -> [Product]
-    func addProduct(user: User, product: Product)
+    func get(user: User) -> [Product]
+    func add(user: User, product: Product)
     
 }
 
@@ -16,7 +16,7 @@ class ProductStorageImpl: ProductStorage {
         self.storage = storage
     }
     
-    func getProducts(user: User) -> [Product] {
+    func get(user: User) -> [Product] {
         
         guard let productData = storage.get(key: "products_of_user_\(user.id)") else {
             return []
@@ -32,7 +32,7 @@ class ProductStorageImpl: ProductStorage {
     }
 }
     
-    func addProduct(user: User, product: Product) {
+    func add(user: User, product: Product) {
         
         guard let productData = storage.get(key: "products_of_user_\(user.id)") else {
             let array = [product]
@@ -49,16 +49,16 @@ class ProductStorageImpl: ProductStorage {
         
         do {
             var productArray = try JSONDecoder().decode([Product].self, from: productData)
-//            var id = productArray.filter{ $0.id != user.id }
             
-            for i in productArray {
-                if i.id != product.id {
-                    productArray.append(product)
-                }
+            if let productIndex = productArray.firstIndex(where: { $0.id == product.id }) {
+                productArray[productIndex] = product
+            } else {
+                productArray.append(product)
             }
-        }
-        catch {
-            print("JSONDecoder error \(error)")
+            let arrayData = try JSONEncoder().encode(productArray)
+            storage.set(data: arrayData, key: "products_of_user_\(user.id)")
+        } catch {
+            print("JSONEncoder error \(error)")
         }
     }
 }

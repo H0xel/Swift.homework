@@ -10,7 +10,7 @@ import Foundation
 class StoragesAssembly {
     
     var inMemory: Storage {
-            return InMemoryStorage()
+        return InMemoryStorage.shared
         }
 
     var userDefaults: Storage {

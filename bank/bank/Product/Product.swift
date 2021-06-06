@@ -67,3 +67,17 @@ struct Product: Codable {
     let name: String
     let type: ProductType
 }
+
+//extension Product {
+//    func add(money: Float) -> Product {
+//        switch self {
+//        case let .deposit(deposit):
+//            return Product(id: id, name: name, type: .deposit(Deposit(percent: deposit.percent, summ: deposit.summ + money, type: deposit.type)))
+//        case let .credit(credit):
+//            return Product(id: id, name: name, type: .credit(Credit(summ: credit.summ, months: months, percentYear: <#T##Float#>)))
+//        }
+//    }
+//}
+
+
+
