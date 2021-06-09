@@ -16,8 +16,6 @@ protocol Bank {
     func createCreditProduct(user: User) -> Product
     func add( phone: Phone, product: Product, money: Float) throws
     func remove( phone: Phone, product: Product, money: Float) throws
-    // func fill(product: Product, user: User, summ: Float)
-    // func withdraw(product: Product, user: User)
     // func products(user: User) -> [Product]
 }
 
@@ -25,17 +23,17 @@ class BankImpl {
     
     let userStorage: UserStorage
     let productStorage: ProductStorage
-    let moneyService: MoneyService
+    let productService: ProductService
     
     
     init(
         storage: UserStorage,
         productStorage: ProductStorage,
-        moneyService: MoneyService
+        productService: ProductService
         ) { // инъекция зависимости
         userStorage = storage
         self.productStorage = productStorage
-        self.moneyService = moneyService
+        self.productService = productService
     }
 }
 
@@ -46,8 +44,8 @@ extension BankImpl: Bank {
         let user = try userStorage.search(phone: phone)
         let productArray = productStorage.get(user: user)
         if productArray.contains(where: {$0.id == product.id}) {
-            let product = try moneyService.add(money: money, product: product)
-            productStorage.add(user: user, product: product)
+            let overrideProduct = try productService.add(money: money, product: product)
+            productStorage.add(user: user, product: overrideProduct)
         } else {
             throw BankErrors.productNotFound
         }
@@ -55,11 +53,12 @@ extension BankImpl: Bank {
     }
     
     func remove(phone: Phone, product: Product, money: Float) throws{
+        
         let user = try userStorage.search(phone: phone)
         let productArray = productStorage.get(user: user)
         if productArray.contains(where: {$0.id == product.id}) {
-            let product = try moneyService.remove(money: money, product: product)
-            productStorage.add(user: user, product: product)
+            let overrideProduct = try productService.remove(money: money, product: product)
+            productStorage.add(user: user, product: overrideProduct)
         } else {
             throw BankErrors.productNotFound
         }
@@ -115,63 +114,47 @@ extension BankImpl: Bank {
  
  */
 
-enum MoneySenderError: Error {
-    case userNotFound
-    case insuffisentFunds
-}
-
-enum MoneyRecieverError: Error {
-    case userNotFound
-    case noValidProducts
-}
-
-protocol MoneyReciever {
-    func recieve(summ: Float, phone: Phone) throws
-}
-
-protocol MoneySender {
-    func send(from: Phone, summ: Float) throws
-}
 
 
 
-extension BankImpl: MoneySender {
-    
-    func send(from phone: Phone, summ: Float) throws {
-        do {
-            let user = try userStorage.search(phone: phone)
-            let productArray = productStorage.get(user: user)
-            
-            guard moneyService.remove(money: summ, product: <#T##Product#>)
-            //moneyService.add(money: summ, product: <#T##Product#>) remove
-            
-        } catch {
-            
-            throw MoneySenderError.userNotFound
-    }
-}
 
-extension BankImpl: MoneyReciever {
-    func recieve(summ: Float, phone: Phone) throws {
-        do {
-            
-            var users = userStorage.users()
-            if users.contains(where: {$0.phone == phone}) == false {
-                do {
-                    // search debet product, if money > summ {}
-                    // addMoney(user: <#T##User#>, money: <#T##Float#>, product: <#T##Product#>)
-                } catch {
-                    MoneyRecieverError.noValidProducts
-                }
-            }
-            
-        } catch {
-            
-            throw MoneyRecieverError.userNotFound
-            
-        }
-    }
-}
+//extension BankImpl: MoneySender {
+//    
+//    func send(from phone: Phone, summ: Float) throws {
+//        do {
+//            let user = try userStorage.search(phone: phone)
+//            let productArray = productStorage.get(user: user)
+//            
+//            guard moneyService.remove(money: summ, product: <#T##Product#>)
+//            //moneyService.add(money: summ, product: <#T##Product#>) remove
+//            
+//        } catch {
+//            
+//            throw MoneySenderError.userNotFound
+//        }
+//    }
+//}
+//extension BankImpl: MoneyReciever {
+//    func recieve(summ: Float, phone: Phone) throws {
+//        do {
+//            
+//            var users = userStorage.users()
+//            if users.contains(where: {$0.phone == phone}) == false {
+//                do {
+//                    // search debet product, if money > summ {}
+//                    // addMoney(user: <#T##User#>, money: <#T##Float#>, product: <#T##Product#>)
+//                } catch {
+//                    MoneyRecieverError.noValidProducts
+//                }
+//            }
+//            
+//        } catch {
+//            
+//            throw MoneyRecieverError.userNotFound
+//            
+//        }
+//    }
+//}
 
 
 

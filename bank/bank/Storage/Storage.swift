@@ -39,7 +39,6 @@ class InMemoryStorage: Storage {
     var dictionary: [String: Data] = [:]
     
     func set(data: Data, key: String) {
-        
         dictionary[key] = data
     }
     

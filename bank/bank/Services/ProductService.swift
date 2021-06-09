@@ -11,6 +11,7 @@ protocol ProductService {
 }
 
 class ProductServiceImpl: ProductService {
+    
     func add(money: Float, product: Product) throws -> Product {
         switch product.type {
         case let .deposit(deposit):
@@ -19,7 +20,9 @@ class ProductServiceImpl: ProductService {
             throw ProductServiceError.productNotFillable
         }
     }
+    
     func remove(money: Float, product: Product) throws -> Product {
+        
         switch product.type {
         case let .deposit(deposit):
             guard deposit.summ >= money else {

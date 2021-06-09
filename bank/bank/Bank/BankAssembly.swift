@@ -8,7 +8,7 @@ class BankAssembly {
     var bank: Bank {
         return BankImpl(storage: storagesAssembly.userStorage,
                         productStorage: storagesAssembly.productStorage,
-                        moneyService: servicesAssembly.moneyService)
+                        productService: servicesAssembly.productService)
     }
 }
 
