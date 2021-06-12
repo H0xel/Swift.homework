@@ -5,7 +5,6 @@ protocol ProductStorage {
     
     func get(user: User) -> [Product]
     func add(user: User, product: Product)
-    
 }
 
 class ProductStorageImpl: ProductStorage {

@@ -9,6 +9,7 @@ class ServicesAssembly {
     var fastPaymentService: FastPaymentsService {
         return FastPaymentsService()
     }
+    
 }
 
 
