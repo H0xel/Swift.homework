@@ -1,18 +1,17 @@
 import Foundation
 
-class FastPaymentsService {
+protocol FastPaymentService {
+    func send(from: Phone, summ: Float, to: Phone) throws
+}
+
+
+class FastPaymentsServiceImpl: FastPaymentService {
     
-    
-    var banks = [MoneyReciever & MoneySender]()
-    
-    
+    var moneyService: MoneyService! // инъекция через свойство
     
     func send(from: Phone, summ: Float, to: Phone) throws {
-        
-    }
-    
-    func register(bank: MoneyReciever & MoneySender) {
-        banks.append(bank)
+        try moneyService.send(from: from, summ: summ)
+        try moneyService.recieve(summ: summ, phone: to)
     }
 }
 

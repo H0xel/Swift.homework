@@ -2,28 +2,30 @@ import Foundation
 
 class ServicesAssembly {
     
+    private let storage = StoragesAssembly()
+    
     var productService: ProductService {
         return ProductServiceImpl()
     }
     
-    var fastPaymentService: FastPaymentsService {
-        return FastPaymentsService()
+    var fastPaymentService: FastPaymentService {
+        let fastPaymentServiceImpl = FastPaymentsServiceImpl()
+        fastPaymentServiceImpl.moneyService = moneyService
+        return fastPaymentServiceImpl
     }
     
+    var preferencesService: PreferencesService {
+        let preferencesService = PreferencesServiceImpl()
+        preferencesService.storage = storage.inMemory
+        return preferencesService
+    }
+    
+    var moneyService: MoneyService {
+        let moneyService = MoneyServiceImpl(userStorage: storage.userStorage,
+                                            productStorage: storage.productStorage,
+                                            productService: productService,
+                                            preferencesService: preferencesService)
+        return moneyService
+    }
 }
 
-
-var services = ServicesAssembly()
-
-//services.fastPaymentService.register(bank: bank1)
-//services.fastPaymentService.register(bank: bank2)
-//
-//services.fastPaymentService.send(from: Phone(countryCode: 7, numberPhone: 999999), summ: 200, to: Phone(countryCode: 7, numberPhone: 222222222))
-
-/*
- 
- if array.containt phone from, phone to
- 
- 
- 
- */

@@ -1,10 +1,3 @@
-//
-//  StorageAssembly.swift
-//  bank
-//
-//  Created by Ivan Amakhin on 03.05.2021.
-//
-
 import Foundation
 
 class StoragesAssembly {
@@ -29,5 +22,7 @@ class StoragesAssembly {
         return ProductStorageImpl(storage: inMemory)
     }
 }
+
+
 
 

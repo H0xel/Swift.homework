@@ -7,11 +7,13 @@ enum MoneyServiceError: Error {
 enum MoneySenderError: Error {
     case userNotFound
     case insuffisentFunds
+    case productReferensesNotFound
 }
 
 enum MoneyRecieverError: Error {
     case userNotFound
     case noValidProducts
+    case productPreferencesNotFound
 }
 
 protocol MoneyReciever {
@@ -28,43 +30,48 @@ typealias MoneyService = MoneySender & MoneyReciever
 
 class MoneyServiceImpl: MoneyService {
     
-    var userStorage: UserStorage
-    var productStorage: ProductStorage
-    var productService: ProductService
+    let userStorage: UserStorage
+    let productStorage: ProductStorage
+    let productService: ProductService
+    let preferencesService: PreferencesService
     
     init(userStorage: UserStorage,
          productStorage: ProductStorage,
-         productService: ProductService) {
+         productService: ProductService,
+         preferencesService: PreferencesService) {
         self.userStorage = userStorage
         self.productStorage = productStorage
         self.productService = productService
+        self.preferencesService = preferencesService
     }
     
     func send(from phone: Phone, summ: Float) throws {
         let user = try userStorage.search(phone: phone)
         let productArray = productStorage.get(user: user)
-        
-        // try productService.remove(money: summ, product: Product)
+        let preferences = preferencesService.getPreferences(user: user)
+        guard let productId = preferences?.productSenderID ?? productArray.first?.id else {
+            throw MoneyServiceError.productNotFound
+                }
+        if let product = productArray.first(where: {$0.id == productId} ) {
+            let productMoneySend = try productService.remove(money: summ, product: product)
+            productStorage.add(user: user, product: productMoneySend)
+            } else {
+            throw MoneyServiceError.productNotFound
+        }
     }
     
     func recieve(summ: Float, phone: Phone) throws {
         let user = try userStorage.search(phone: phone)
         let productArray = productStorage.get(user: user)
-        
-        // try productService.add(money: summ, product: <#T##Product#>)
+        let preferences = preferencesService.getPreferences(user: user)
+        guard let productId = preferences?.productReceiverID ?? productArray.first?.id else {
+            throw MoneyServiceError.productNotFound
+        }
+        if let product = productArray.first(where: {$0.id == productId} ) {
+            let productMoneySend = try productService.add(money: summ, product: product)
+            productStorage.add(user: user, product: productMoneySend)
+            } else {
+            throw MoneyServiceError.productNotFound
+        }
     }
 }
-
-
-//Логика 1 и 2 пункта будет находиться тут
-//Подготовиться к ретро подумать что получилось/не получилось/что нужно улучшить в нашем процессе обучения
-
-
-
-//func settings(user: User, productType: ProductType) -> Product {
-//    
-//    let products = get(user: user)
-//    
-//    
-//    return Product(id: <#T##String#>, name: <#T##String#>, type: productType)
-//}
