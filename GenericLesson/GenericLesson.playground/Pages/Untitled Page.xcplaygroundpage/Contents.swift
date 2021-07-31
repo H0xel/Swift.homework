@@ -208,3 +208,6 @@ let newStruct = NewestStruct(id: "AnotherNewId")
 try storage.set(value: newStruct, key: "AnotherNewKey")
 let anotherStruct: NewestStruct = try storage.value(key: "AnotherNewKey")
 print(anotherStruct)
+
+
+
